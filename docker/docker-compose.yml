@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  dyson:
+    build:
+      context: ${PWD}
+      dockerfile: docker/ces.DockerFile
+    image: ces:0.0.1
+    platform: linux/amd64
+    ports:
+      - "6006:6006"
+    restart: always
