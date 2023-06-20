@@ -1,12 +1,9 @@
-# Dyson Technical Challenge
+# Customer Experience Survey Prediction
 
 ## **A. Overview**
 This submission consists of the following sections:
 
-1. Dyson.ipynb file - Main submission
-2. Simple web frontend - Consisting of files in docker, models and src folders
 
-Please unpack the zip file and cd into location. This location will be refered to in this documentation as `<base>`.
 
 ---
 ## **B. Folder Structure**
