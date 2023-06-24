@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 version: '3.7'
 
 services:
@@ -41,26 +40,3 @@ services:
     volumes:
       - ${PWD}/models:/models
     entrypoint: mlflow server --host 0.0.0.0 --port 5005 --backend-store-uri sqlite:///models/mlflow.db --default-artifact-root s3://mlflow 
-
-
-    # entrypoint: mlflow server \
-    #   --backend-store-uri sqlite:///models/mlflow.db \
-    #   --default-artifact-root '/models/artifacts' \
-    #   --artifacts-destination '/models/artifacts' \
-    #   --serve-artifacts \
-    #   --host 0.0.0.0 \
-    #   --port 5005 
-=======
-version: '3'
-
-services:
-  dyson:
-    build:
-      context: ${PWD}
-      dockerfile: docker/ces.DockerFile
-    image: ces:0.0.1
-    platform: linux/amd64
-    ports:
-      - "6006:6006"
-    restart: always
->>>>>>> 9176400ce1b913d9bd16f72eb9cd48e1f467b0a9
