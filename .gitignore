@@ -1,3 +1,10 @@
+# Repository Specific ignore files
+notebook/
+minio/*
+models/mlflow.db
+models/artifacts/
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

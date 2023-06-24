@@ -1,12 +1,7 @@
 # Dyson Technical Challenge
 
 ## **A. Overview**
-This submission consists of the following sections:
 
-1. Dyson.ipynb file - Main submission
-2. Simple web frontend - Consisting of files in docker, models and src folders
-
-Please unpack the zip file and cd into location. This location will be refered to in this documentation as `<base>`.
 
 ---
 ## **B. Folder Structure**
@@ -16,11 +11,11 @@ The following shows the folder structure of the repository.
 ```bash
   <base>
     ├── .env              # Required to use for mapbox api in Jupyter
-    ├── dyson.ipynb       # Jupyter Notebook
+    ├── eda.ipynb       # Jupyter Notebook
     ├── conda-env.yaml    # conda env file for Jupyter Notebook
     ├── readme.md      
     ├── data
-    │   └── cali_dyson_households.csv  # Provided data file
+    │   └── cali_ces_households.csv  # Provided data file
     ├── docker
     │   ├── ces.DockerFile             # dockerfile
     │   ├── docker-compose.yml         # docker-compose file
@@ -68,4 +63,8 @@ graph TD
     C -- Best_params--> D -- Final model choice --> E(Model in Production)
 ```
 
+<<<<<<< HEAD
 ---
+=======
+---
+>>>>>>> 9176400ce1b913d9bd16f72eb9cd48e1f467b0a9
