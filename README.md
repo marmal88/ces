@@ -1,6 +1,43 @@
-# Dyson Technical Challenge
+# Customer Experience Survey Prediction
 
 ## **A. Overview**
+The aim of this notebook is to demonstrate a workable MLOps solution to allow for team level collaboration between teams of data scientist and ML engineers.
+
+The objective of the 
+
+---
+### **A.1 Why is Model Tracking Necessary**
+With AI at an inflection point and gaining increasing scale. It is necessary to allow teams of Data Scientists and ML engineers to work together. However, when it comes to large teams, the task of tracking and comparing multiple experiment runs across different users is a tedious task without the necessary infrastructure.
+
+Hence, the use of MLFlow and its associated parts allows the data science team to quickly scale up and leverage work across the different teams quickly.
+
+### **A.2 Parts of the stack**
+
+#### **1. MLFlow (Model Tracking and Registry):** 
+MLFlow consist of 4 main parts: MLflow tracking, MLflow Projects
+
+
+For more information regarding MLFlow, please look up MLFlow [documentation](https://mlflow.org/docs/latest/index.html)
+
+#### **2. Minio (Bucket Store):**
+After each tracking run, MLFlow assigns a run ID and saves associated run artifcats together for easier retrieval in the future. Minio serves as a way for MLflow to interact with the various saved artifacts.
+
+Instead of a local storage, Minio saves the objects in an S3 like blob store. Being S3 compatible means one only has to change the bucket location to a cloud provider to scale up the entire operation.
+
+For more information regarding MLFlow, please look up Minio [documentation](https://min.io/docs/minio/linux/index.html)
+
+#### **3. SQlite (Parameter and Metric Store):**
+Backend database for parameters and metrics for the tracking 
+
+
+
+![](./assets/readme_assets/Minio_mlflow_sqlite.drawio.png)
+
+
+### **A.1 Setting up MLFlow Server and Minio**
+
+To understand 
+
 
 
 ---
@@ -11,11 +48,11 @@ The following shows the folder structure of the repository.
 ```bash
   <base>
     ├── .env              # Required to use for mapbox api in Jupyter
-    ├── eda.ipynb       # Jupyter Notebook
+    ├── dyson.ipynb       # Jupyter Notebook
     ├── conda-env.yaml    # conda env file for Jupyter Notebook
     ├── readme.md      
     ├── data
-    │   └── cali_ces_households.csv  # Provided data file
+    │   └── cali_dyson_households.csv  # Provided data file
     ├── docker
     │   ├── ces.DockerFile             # dockerfile
     │   ├── docker-compose.yml         # docker-compose file
@@ -63,8 +100,4 @@ graph TD
     C -- Best_params--> D -- Final model choice --> E(Model in Production)
 ```
 
-<<<<<<< HEAD
 ---
-=======
----
->>>>>>> 9176400ce1b913d9bd16f72eb9cd48e1f467b0a9
