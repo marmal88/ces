@@ -8,13 +8,14 @@ from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, make_scorer
 import mlflow
-import joblib
+from dotenv import load_dotenv
+import boto3
+import os
 
 
 class Training_Pipeline:
 
     def __init__(self, df_location):
-
         self.setup_mlflow()
         
         self.df = pd.read_csv(df_location)
@@ -33,9 +34,11 @@ class Training_Pipeline:
                         }
     
     def setup_mlflow(self):
+        # load necessary access keys
+        load_dotenv()
+        
         # Create nested runs
-        mlflow.set_tracking_uri("http://127.0.0.1:5005")  # "http://127.0.0.1:5005"
-        mlflow.set_experiment("random_forest")
+        mlflow.set_experiment(experiment_name="random_forest")
         mlflow.sklearn.autolog()
 
     def hyperparameter_tuning(self, cv):
@@ -64,7 +67,7 @@ class Training_Pipeline:
         grid_search = GridSearchCV( lin_reg_pipe,
                                     param_grid=param_grid,
                                     scoring=self.scoring,
-                                    refit=False,
+                                    refit="RMSE",
                                     cv=5
                                 )
 
@@ -75,8 +78,8 @@ class Training_Pipeline:
             # joblib.dump(random_search, 'random_search.pkl')
 
             # mlflow.log_artifact()
-            print(mlflow.get_run(run_id=run.info.run_id))
-            mlflow.sklearn.save_model(sk_model=grid_search, path=f"models/artifacts/{run.info.run_id}.pkl")
+            # print(mlflow.get_run(run_id=run.info.run_id))
+            # mlflow.sklearn.log_model(sk_model=grid_search, artifact_path=f"run.info.run_id") #path=f"run.info.run_id"
 
 
         for metric in self.scoring:
@@ -97,4 +100,4 @@ class Training_Pipeline:
 
 
 if __name__=="__main__":
-    Training_Pipeline(df_location="data/cali_dyson_households.csv").hyperparameter_tuning(cv=5)
+    Training_Pipeline(df_location="data/cali_ces_households.csv").hyperparameter_tuning(cv=5)
