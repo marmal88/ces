@@ -1,7 +1,7 @@
 # Repository Specific ignore files
 notebook/
 minio/*
-models/mlflow.db
+data/db
 models/artifacts/
 
 
