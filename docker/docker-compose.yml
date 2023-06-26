@@ -18,28 +18,46 @@ services:
       - "9000:9000"
       - "9001:9001"
     env_file:
-      - ../.env
+      - .env
     volumes:
       - ${PWD}/minio:/data
     command: minio server /data --console-address ":9001"
+  create_s3_bucket:
+    image: minio/mc
+    container_name: create_s3_bucket
+    env_file:
+      - .env
+    entrypoint: >
+      /bin/sh -c "
+      until (/usr/bin/mc alias set minio http://minio:9000 '${MINIO_ACCESS_KEY}' '${MINIO_SECRET_KEY}') do echo '...waiting...' && sleep 1; done;
+      /usr/bin/mc mb minio/${AWS_BUCKET_NAME};
+      /usr/bin/mc admin user add minio '${AWS_ACCESS_KEY_ID}' '${AWS_SECRET_ACCESS_KEY}';
+      /usr/bin/mc admin policy attach minio readwrite --user '${AWS_ACCESS_KEY_ID}';
+      exit 0;
+      "
+    depends_on:
+      - minio
+    # /usr/bin/mc anonymous set public minio/${AWS_BUCKET_NAME};
 
   mlflow:
-    depends_on: 
-     - minio
     restart: always
     container_name: mlflow
     image: ghcr.io/mlflow/mlflow:latest
     ports:
       - "5005:5005"
     env_file:
-      - ../.env
+      - .env
     volumes:
       - ${PWD}/data/db:/db
     entrypoint: >
-      bash -c "pip install boto3 
-      && mlflow server --backend-store-uri sqlite:///db/mlflow.db --default-artifact-root s3://mlflow/ --artifacts-destination s3://mlflow/ --host 0.0.0.0 --port 5005"
+      /bin/sh -c "pip install boto3 mlflow && 
+      mlflow server --backend-store-uri sqlite:///db/mlflow.db --default-artifact-root s3://${AWS_BUCKET_NAME}/ --host 0.0.0.0 --port 5005"
+    depends_on:
+      create_s3_bucket:
+        condition: service_completed_successfully
 
-    # 
+    # --artifacts-destination s3://${AWS_BUCKET_NAME}/
+    # mlflow server --backend-store-uri mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE} --default-artifact-root s3://${AWS_BUCKET_NAME}/ --artifacts-destination s3://${AWS_BUCKET_NAME}/ -h 0.0.0.0
     # user: ${USER}:${USER}
     # build:
     #   context: ${PWD}

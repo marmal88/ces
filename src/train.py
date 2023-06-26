@@ -35,9 +35,10 @@ class Training_Pipeline:
     
     def setup_mlflow(self):
         # load necessary access keys
-        load_dotenv()
+        load_dotenv(dotenv_path="docker/.env")
         
         # Create nested runs
+        # mlflow.set_tracking_uri(uri="http://127.0.0.1:5005")
         mlflow.set_experiment(experiment_name="random_forest")
         mlflow.sklearn.autolog()
 
