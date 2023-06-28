@@ -38,7 +38,7 @@ class Training_Pipeline:
         load_dotenv(dotenv_path="docker/.env")
         
         # Create nested runs
-        # mlflow.set_tracking_uri(uri="http://127.0.0.1:5005")
+        mlflow.set_tracking_uri(uri="http://127.0.0.1:5005")
         mlflow.set_experiment(experiment_name="random_forest")
         mlflow.sklearn.autolog()
 
@@ -80,7 +80,7 @@ class Training_Pipeline:
 
             # mlflow.log_artifact()
             # print(mlflow.get_run(run_id=run.info.run_id))
-            # mlflow.sklearn.log_model(sk_model=grid_search, artifact_path=f"run.info.run_id") #path=f"run.info.run_id"
+            mlflow.sklearn.log_model(sk_model=grid_search, artifact_path=f"run.info.run_id") #path=f"run.info.run_id"
 
 
         for metric in self.scoring:
