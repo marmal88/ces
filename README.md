@@ -31,7 +31,7 @@ Backend database for parameters and metrics for the tracking
 
 
 
-![](./assets/readme_assets/Minio_mlflow_sqlite.drawio.png)
+![](./assets/readme_assets/scenario_5.png)
 
 
 ### **A.1 Setting up MLFlow Server and Minio**
