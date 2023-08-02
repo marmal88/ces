@@ -1,7 +1,13 @@
+import os
 import joblib
-import numpy as np
 import pandas as pd
 import streamlit as st
+import boto3
+import botocore
+from io import BytesIO
+from dotenv import load_dotenv
+
+from src.utils import read_yaml_file
 
 st.title("Customer Engagement Prediction")
 
@@ -53,19 +59,42 @@ def make_df(
 
 
 @st.cache_data
-def load_model(model_name: str):
+def load_model():
     """Loads the model and returns it for inference
-    Args:
-        model_name (str): file name of the model
     Returns:
         sklearn.model: model as per config file setting
     """
-    loaded_model = joblib.load(f"models/{model_name}")
-    return loaded_model
+    path_to_dotenv_file = os.path.abspath(os.path.join(os.getcwd(), "docker/.env"))
+    print(path_to_dotenv_file)
+    if os.path.isfile(path_to_dotenv_file):
+        load_dotenv(dotenv_path=path_to_dotenv_file)
+        MINIO_LOCATION = os.environ.get("MLFLOW_S3_ENDPOINT_URL") 
+        ACCESSKEY = os.environ.get("MINIO_ACCESS_KEY" ) 
+        SECRETKEY = os.environ.get("MINIO_SECRET_KEY" ) 
+
+        config = read_yaml_file()
+        model_path = config["streamlit"]["model_path"]
+        model_name ="/".join(model_path.split("/")[3:])
+
+        s3 = boto3.client('s3', 
+                aws_access_key_id = ACCESSKEY,
+                aws_secret_access_key = SECRETKEY,
+                aws_session_token=None,
+                endpoint_url=MINIO_LOCATION,
+                config=boto3.session.Config(signature_version='s3v4'),
+                verify = False)
+
+        if s3.list_buckets()["Buckets"][0]["Name"] == "mlflow":
+            response = s3.get_object(Bucket="mlflow", Key=model_name)
+            with BytesIO(response['Body'].read()) as f:
+                f.seek(0)
+                model = joblib.load(f)
+            return model
+        else:
+            print("Bucket Mlflow not found")
 
 
-model_name = "lin_reg_pipe.pkl"
-model = load_model(model_name)
+model = load_model()
 
 st.subheader("Make a Prediction")
 predict = st.button("Click me!")

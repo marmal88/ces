@@ -9,8 +9,6 @@ from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, make_scorer
 import mlflow
 from dotenv import load_dotenv
-import boto3
-import os
 
 
 class Training_Pipeline:
@@ -42,7 +40,7 @@ class Training_Pipeline:
         mlflow.set_experiment(experiment_name="random_forest")
         mlflow.sklearn.autolog()
 
-    def hyperparameter_tuning(self, cv):
+    def hyperparameter_tuning(self, cv_num:str):
 
         X_train, _ , y_train, _ = self._split()
 
@@ -69,11 +67,11 @@ class Training_Pipeline:
                                     param_grid=param_grid,
                                     scoring=self.scoring,
                                     refit="RMSE",
-                                    cv=5
+                                    cv=cv_num
                                 )
 
         # fitting on training data
-        with mlflow.start_run() as run:
+        with mlflow.start_run():
             grid_search.fit(X_train, y_train)
             
             # joblib.dump(random_search, 'random_search.pkl')
@@ -101,4 +99,4 @@ class Training_Pipeline:
 
 
 if __name__=="__main__":
-    Training_Pipeline(df_location="data/cali_ces_households.csv").hyperparameter_tuning(cv=5)
+    Training_Pipeline(df_location="data/cali_ces_households.csv").hyperparameter_tuning(cv_num=5)
