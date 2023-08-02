@@ -74,10 +74,22 @@ conda env create -f conda-env.yaml
 conda activate ces
 ```
 
-### **C.2. Running Front-End**
+### **C.2. Setting Up Minio and MLflow**
 2.1 To run streamlit via docker, please use the command:
   ```bash
-  docker compose -f docker/docker-compose.yml up -d
+  docker compose -f docker/docker-compose.yml --profile startup up -d
+  ```
+2.2 Once the image has been sucessfully created you can access the mlflow on your browser at `localhost:5005` and minio at `localhost:9001`
+
+2.3 To stop the container, please use the command:
+  ```bash
+  docker compose -f docker/docker-compose.yml down 
+  ```
+
+### **C.3. Running Front-End**
+2.1 To run streamlit via docker, please use the command:
+  ```bash
+  docker compose -f docker/docker-compose.yml --profile frontend up -d
   ```
 
 2.2 Once the image has been sucessfully created you can access the frontend on your browser at `localhost:6006`
