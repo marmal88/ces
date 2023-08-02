@@ -3,4 +3,4 @@
 *.pyi linguist-language=python
 
 # Jupyter notebook
-*.ipynb text
+*.ipynb linguist-language=python
