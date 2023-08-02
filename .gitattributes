@@ -1,0 +1,3 @@
+# Example of a `.gitattributes` file which reclassifies `.rb` files as Python:
+*.ipynb linguist-language=Python
+
