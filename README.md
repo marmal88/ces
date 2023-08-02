@@ -84,7 +84,7 @@ conda activate ces
 
 2.3 To stop the container, please use the command:
   ```bash
-  docker-compose -f docker/docker-compose.yml down 
+  docker compose -f docker/docker-compose.yml down 
   ```
 
 ---
