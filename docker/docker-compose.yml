@@ -1,19 +1,22 @@
 version: '3.7'
 
 services:
-  # frontend:
-  #   restart: always
-  #   build:
-  #     context: ${PWD}
-  #     dockerfile: docker/frontend.DockerFile
-  #   image: frontend:0.0.1
-  #   platform: linux/amd64
-  #   ports:
-  #     - "6006:6006"
+  frontend:
+    profiles: ["frontend"]
+    restart: always
+    build:
+      context: ${PWD}
+      dockerfile: docker/frontend.DockerFile
+    image: frontend:0.0.1
+    platform: linux/amd64
+    ports:
+      - "6006:6006"
 
   minio:
+    profiles: ["startup"]
     container_name: minio
-    image: quay.io/minio/minio:latest
+    image: quay.io/minio/minio:RELEASE.2023-07-21T21-12-44Z
+    # For Minio latest stable release, Check:https://min.io/docs/minio/container/index.html 
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -23,7 +26,9 @@ services:
     volumes:
       - ${PWD}/minio:/data
     command: minio server /data --console-address ":9001"
+
   create_s3_bucket:
+    profiles: ["startup"]
     container_name: create_s3_bucket
     image: minio/mc
     entrypoint: >
@@ -39,6 +44,7 @@ services:
     # /usr/bin/mc anonymous set public minio/${AWS_BUCKET_NAME};
 
   mlflow:
+    profiles: ["startup"]
     container_name: mlflow
     image: ghcr.io/mlflow/mlflow:latest
     restart: always
