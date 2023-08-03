@@ -1,0 +1,6 @@
+# Specify Python source files. 
+*.py linguist-language=python
+*.pyi linguist-language=python
+
+# Jupyter notebook
+*.ipynb linguist-language=python

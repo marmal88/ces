@@ -1,12 +1,65 @@
-version: '3'
+version: '3.7'
 
 services:
-  dyson:
+  frontend:
+    profiles: ["frontend"]
+    restart: always
     build:
       context: ${PWD}
-      dockerfile: docker/ces.DockerFile
-    image: ces:0.0.1
+      dockerfile: docker/frontend.DockerFile
+    image: frontend:0.0.1
     platform: linux/amd64
     ports:
       - "6006:6006"
+
+  minio:
+    profiles: ["startup"]
+    container_name: minio
+    image: quay.io/minio/minio:RELEASE.2023-07-21T21-12-44Z
+    # For Minio latest stable release, Check:https://min.io/docs/minio/container/index.html 
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+    volumes:
+      - ${PWD}/minio:/data
+    command: minio server /data --console-address ":9001"
+
+  create_s3_bucket:
+    profiles: ["startup"]
+    container_name: create_s3_bucket
+    image: minio/mc
+    entrypoint: >
+      /bin/sh -c "
+      until (/usr/bin/mc alias set minio http://minio:9000 '${MINIO_ACCESS_KEY}' '${MINIO_SECRET_KEY}') do echo '...waiting...' && sleep 1; done;
+      /usr/bin/mc mb minio/${AWS_BUCKET_NAME};
+      /usr/bin/mc admin user add minio '${AWS_ACCESS_KEY_ID}' '${AWS_SECRET_ACCESS_KEY}';
+      /usr/bin/mc admin policy attach minio readwrite --user '${AWS_ACCESS_KEY_ID}';
+      exit 0;
+      "
+    depends_on:
+      - minio
+    # /usr/bin/mc anonymous set public minio/${AWS_BUCKET_NAME};
+
+  mlflow:
+    profiles: ["startup"]
+    container_name: mlflow
+    image: ghcr.io/mlflow/mlflow:latest
     restart: always
+    ports:
+      - "5005:5005"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_REGION}
+      - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+    volumes:
+      - ${PWD}/data/db:/db
+    entrypoint: >
+      /bin/sh -c "pip install boto3 && 
+      mlflow server --backend-store-uri sqlite:///db/mlflow.db --default-artifact-root s3://${AWS_BUCKET_NAME}/ --artifacts-destination s3://${AWS_BUCKET_NAME}/ --host 0.0.0.0 --port 5005"
+    depends_on:
+      create_s3_bucket:
+        condition: service_completed_successfully

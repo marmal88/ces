@@ -1,7 +1,42 @@
 # Customer Experience Survey Prediction
 
 ## **A. Overview**
-This submission consists of the following sections:
+The aim of this notebook is to demonstrate a workable MLOps solution to allow for team level collaboration between teams of data scientist and ML engineers.
+
+The objective of the 
+
+---
+### **A.1 Why is Model Tracking Necessary**
+With AI at an inflection point and gaining increasing scale. It is necessary to allow teams of Data Scientists and ML engineers to work together. However, when it comes to large teams, the task of tracking and comparing multiple experiment runs across different users is a tedious task without the necessary infrastructure.
+
+Hence, the use of MLFlow and its associated parts allows the data science team to quickly scale up and leverage work across the different teams quickly.
+
+### **A.2 Parts of the stack**
+
+#### **1. MLFlow (Model Tracking and Registry):** 
+MLFlow consist of 4 main parts: MLflow tracking, MLflow Projects
+
+
+For more information regarding MLFlow, please look up MLFlow [documentation](https://mlflow.org/docs/latest/index.html)
+
+#### **2. Minio (Bucket Store):**
+After each tracking run, MLFlow assigns a run ID and saves associated run artifcats together for easier retrieval in the future. Minio serves as a way for MLflow to interact with the various saved artifacts.
+
+Instead of a local storage, Minio saves the objects in an S3 like blob store. Being S3 compatible means one only has to change the bucket location to a cloud provider to scale up the entire operation.
+
+For more information regarding MLFlow, please look up Minio [documentation](https://min.io/docs/minio/linux/index.html)
+
+#### **3. SQlite (Parameter and Metric Store):**
+Backend database for parameters and metrics for the tracking 
+
+
+
+![](./assets/readme_assets/scenario_5.png)
+
+
+### **A.1 Setting up MLFlow Server and Minio**
+
+To understand 
 
 
 
@@ -39,17 +74,29 @@ conda env create -f conda-env.yaml
 conda activate ces
 ```
 
-### **C.2. Running Front-End**
+### **C.2. Setting Up Minio and MLflow**
 2.1 To run streamlit via docker, please use the command:
   ```bash
-  docker compose -f docker/docker-compose.yml up -d
+  docker compose -f docker/docker-compose.yml --profile startup up -d
+  ```
+2.2 Once the image has been sucessfully created you can access the mlflow on your browser at `localhost:5005` and minio at `localhost:9001`
+
+2.3 To stop the container, please use the command:
+  ```bash
+  docker compose -f docker/docker-compose.yml down 
+  ```
+
+### **C.3. Running Front-End**
+2.1 To run streamlit via docker, please use the command:
+  ```bash
+  docker compose -f docker/docker-compose.yml --profile frontend up -d
   ```
 
 2.2 Once the image has been sucessfully created you can access the frontend on your browser at `localhost:6006`
 
 2.3 To stop the container, please use the command:
   ```bash
-  docker-compose -f docker/docker-compose.yml down 
+  docker compose -f docker/docker-compose.yml down 
   ```
 
 ---

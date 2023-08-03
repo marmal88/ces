@@ -1,0 +1,5 @@
+---
+# Settings set for streamlit inference
+streamlit:
+  # Under experiments select the fullpath from model.pkl
+  model_path: "s3://mlflow/1/9d2128d0dc4f4affb77c94f28664afc5/artifacts/best_estimator/model.pkl"
